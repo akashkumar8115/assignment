@@ -10,7 +10,7 @@ const featuredBooks = [
         price: 24.99,
         rating: 4.5,
         reviews: 2547,
-        coverImage: "/books/midnight-library.jpg"
+        coverImage: "https://img.freepik.com/free-vector/hand-drawn-flat-education-illustration-book-set_23-2151358291.jpg?semt=ais_hybrid"
     },
     {
         id: 2,
@@ -19,7 +19,7 @@ const featuredBooks = [
         price: 19.99,
         rating: 4.8,
         reviews: 4521,
-        coverImage: "/books/atomic-habits.jpg"
+        coverImage: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTwxH5bTovmI8NaDFms9LXiwmC6gTwule7JFhNEhxxwJB8MdG1XNVQORYyHBOyl0eGwj7c&usqp=CAU"
     },
     {
         id: 3,
@@ -28,7 +28,7 @@ const featuredBooks = [
         price: 27.99,
         rating: 4.7,
         reviews: 1832,
-        coverImage: "/books/project-hail-mary.jpg"
+        coverImage: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSr0BW7imkpcXrun-Yf7ntxe6FLj7fe1n_gNVahijlYjvbBEo5JVEXOQK6lendYqXQhdVg&usqp=CAU"
     },
     {
         id: 4,
@@ -37,7 +37,7 @@ const featuredBooks = [
         price: 21.99,
         rating: 4.6,
         reviews: 3254,
-        coverImage: "/books/dune.jpg"
+        coverImage: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTO32Qj8RbsafOtD33hk6C_EPb07MZ4oQPIWFmPMqRIvx1h_wKrkOZgpe5dm2uzQpd5Udw&usqp=CAU"
     }
 ];
 

@@ -46,7 +46,7 @@ function HomePage() {
                         <Grid item xs={12} md={6}>
                             <Paper elevation={3} className="p-6">
                                 <img
-                                    src="/books-illustration.svg"
+                                    src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTO32Qj8RbsafOtD33hk6C_EPb07MZ4oQPIWFmPMqRIvx1h_wKrkOZgpe5dm2uzQpd5Udw&usqp=CAU"
                                     alt="Books"
                                     className="w-full"
                                 />

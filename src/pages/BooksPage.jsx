@@ -11,6 +11,7 @@ import {
 import { Add as AddIcon } from '@mui/icons-material';
 import SearchBar from '../components/SearchBar';
 import SortOptions from '../components/SortOptions';
+import BookList from '../components/BookList';
 import BookCard from '../components/BookCard';
 import AddEditBookDialog from '../components/AddEditBookDialog';
 import LoadingSpinner from '../components/LoadingSpinner';
@@ -104,8 +105,8 @@ function BooksPage() {
 
             <SearchBar />
             <SortOptions />
-
-            <Grid container spacing={3} className="mt-6">
+            <BookList onEditBook={handleEditBook} />
+            {/* <Grid container spacing={3} className="mt-6">
                 {filteredBooks.map((book) => (
                     <Grid item xs={12} sm={6} md={4} key={book.id}>
                         <BookCard
@@ -114,7 +115,7 @@ function BooksPage() {
                         />
                     </Grid>
                 ))}
-            </Grid>
+            </Grid> */}
 
             <AddEditBookDialog
                 open={dialogOpen}

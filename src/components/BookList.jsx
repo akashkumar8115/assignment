@@ -1,19 +1,41 @@
 import React from 'react';
-import { useAppSelector, useAppDispatch } from '../app/hooks';
-import { setSearchQuery } from '../features/booksSlice';
+import { useSelector } from 'react-redux';
+import { Grid, Typography } from '@mui/material';
+import BookCard from './BookCard';
 
-function BookList() {
-    const dispatch = useAppDispatch();
-    const books = useAppSelector(state => state.books.books);
-    const searchQuery = useAppSelector(state => state.books.searchQuery);
+function BookList({ onEditBook }) {
+    const { books, searchQuery, sortOption } = useSelector((state) => state.books);
+
+    // Filter and sort books
+    const filteredAndSortedBooks = React.useMemo(() => {
+        return [...books]
+            .filter((book) =>
+                book?.name?.toLowerCase().includes((searchQuery || '').toLowerCase()) ||
+                book?.author?.toLowerCase().includes((searchQuery || '').toLowerCase())
+            )
+            .sort((a, b) => {
+                if (sortOption === 'lowToHigh') return a.price - b.price;
+                if (sortOption === 'highToLow') return b.price - a.price;
+                return 0;
+            });
+    }, [books, searchQuery, sortOption]);
+
+    if (!filteredAndSortedBooks.length) {
+        return (
+            <Typography variant="h6" align="center" color="textSecondary">
+                No books found
+            </Typography>
+        );
+    }
 
     return (
-        // Your component JSX
-        <>
-        <input type="text" value={searchQuery} onChange={e => dispatch(setSearchQuery(e.target.value))} />
-        {/* Your component JSX */}
-        
-        </>
+        <Grid container spacing={3}>
+            {filteredAndSortedBooks.map((book) => (
+                <Grid item xs={12} sm={6} md={4} key={book.id || Math.random()}>
+                    <BookCard book={book} onEdit={() => onEditBook(book)} />
+                </Grid>
+            ))}
+        </Grid>
     );
 }
 
