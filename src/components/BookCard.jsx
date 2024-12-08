@@ -54,7 +54,9 @@ function BookCard({ book, onEdit }) {
                             <Edit />
                         </IconButton>
                         <IconButton
-                            onClick={() => dispatch(deleteBook(book.id))}
+                            onClick={handleDelete}
+                            aria-label="delete"
+                            aria-haspopup="true"
                             className="hover:text-red-600"
                         >
                             <Delete />

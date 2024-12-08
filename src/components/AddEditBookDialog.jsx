@@ -8,50 +8,59 @@ import {
     TextField,
     Button,
 } from '@mui/material';
-import { addBook, updateBook } from '../features/booksSlice';
-import { image } from 'framer-motion/client';
+import { addBook, updateBook,deleteBook,fetchBooks } from '../features/booksSlice';
 
 function AddEditBookDialog({ open, handleClose, book, onSuccess, onError }) {
     const dispatch = useDispatch();
     const [formData, setFormData] = useState({
-        imageUrl: '',
         name: '',
         author: '',
         price: '',
+        imageUrl: ''
     });
+    const [selectedFile, setSelectedFile] = useState(null);
 
     useEffect(() => {
         if (book) {
             setFormData(book);
         } else {
             setFormData({
-                imageUrl: '',
                 name: '',
                 author: '',
                 price: '',
+                imageUrl: ''
             });
         }
     }, [book]);
+
+    const handleFileChange = (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setFormData({ ...formData, imageUrl: reader.result });
+            };
+            reader.readAsDataURL(file);
+            setSelectedFile(file);
+        }
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
             const bookData = {
-                imageUrl: formData.imageUrl,
                 name: formData.name,
                 author: formData.author,
-                price: Number(formData.price)
+                price: Number(formData.price),
+                imageUrl: formData.imageUrl
             };
 
             if (book) {
                 await dispatch(updateBook({ ...bookData, id: book.id })).unwrap();
                 onSuccess('Book updated successfully!');
-                console.log('Book updated successfully!', bookData);
-
             } else {
                 await dispatch(addBook(bookData)).unwrap();
                 onSuccess('Book added successfully!');
-                console.log('Book added Unsuccessfully!', bookData);
             }
             handleClose();
         } catch (error) {
@@ -63,19 +72,24 @@ function AddEditBookDialog({ open, handleClose, book, onSuccess, onError }) {
         <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
             <form onSubmit={handleSubmit}>
                 <DialogTitle>{book ? 'Edit Book' : 'Add New Book'}</DialogTitle>
-                <DialogActions>
-                    <input type="file" accept="image/*"
-                        onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
-                        autoFocus
-                        margin="dense"
-                        label="Book imagee"
-                        fullWidth
-                        required
-                        value={formData.imageUrl}
-                    />
-                </DialogActions>
-
                 <DialogContent>
+                    <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleFileChange}
+                        style={{ margin: '10px 0' }}
+                    />
+                    {formData.imageUrl && (
+                        <img
+                            src={formData.imageUrl}
+                            alt="Preview"
+                            style={{
+                                maxWidth: '100%',
+                                maxHeight: '200px',
+                                marginBottom: '10px'
+                            }}
+                        />
+                    )}
                     <TextField
                         autoFocus
                         margin="dense"
@@ -109,8 +123,6 @@ function AddEditBookDialog({ open, handleClose, book, onSuccess, onError }) {
                         {book ? 'Update' : 'Add'}
                     </Button>
                 </DialogActions>
-
-
             </form>
         </Dialog>
     );

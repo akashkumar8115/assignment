@@ -18,7 +18,6 @@ import { fetchBooks } from '../features/booksSlice';
 
 function BooksPage() {
     const dispatch = useDispatch();
-    // const { books, searchQuery, sortOption, status } = useSelector((state) => state.books);
     const { books = [], searchQuery = '', sortOption = '', status } = useSelector((state) => state.books);
     const [dialogOpen, setDialogOpen] = useState(false);
     const [selectedBook, setSelectedBook] = useState(null);
@@ -27,15 +26,6 @@ function BooksPage() {
         message: '',
         severity: 'success'
     });
-
-    // Add error handling for empty books array
-    if (!Array.isArray(books)) {
-        return <div>No books available</div>;
-    }
-
-    if (status === 'loading') {
-        return <LoadingSpinner />;
-    }
 
     useEffect(() => {
         if (status === 'idle') {
@@ -75,21 +65,25 @@ function BooksPage() {
         });
     };
 
-    // Update the filteredBooks logic with null checks
-    const filteredBooks = books
-        .filter((book) =>
-            (book?.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                book?.author?.toLowerCase().includes(searchQuery.toLowerCase())) ?? false
-        )
-        .sort((a, b) => {
+    // Move filtered books logic here
+    const filteredBooks = Array.isArray(books)
+        ? books.filter((book) =>
+            book?.name?.toLowerCase().includes((searchQuery || '').toLowerCase()) ||
+            book?.author?.toLowerCase().includes((searchQuery || '').toLowerCase())
+        ).sort((a, b) => {
             if (sortOption === 'lowToHigh') return a.price - b.price;
             if (sortOption === 'highToLow') return b.price - a.price;
             return 0;
-        });
+        })
+        : [];
 
-
+    // Render loading state
     if (status === 'loading') {
-        return <LoadingSpinner />;
+        return (
+            <Container maxWidth="lg" className="py-8 pt-16">
+                <LoadingSpinner />
+            </Container>
+        );
     }
 
     return (

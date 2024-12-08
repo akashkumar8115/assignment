@@ -27,9 +27,10 @@ export const fetchBooks = createAsyncThunk(
             const data = await response.json();
             return data.map(book => ({
                 id: book.id,
-                name: book.name || 'Untitled',
-                author: book.author || 'Unknown Author',
-                price: book.price || 0
+                name: book.bookName || 'Untitled',
+                author: book.authorName || 'Unknown Author',
+                price: book.price || 0,
+                imageUrl: book.imageUrl || 'https://img.freepik.com/free-vector/hand-drawn-flat-education-illustration-book-set_23-2151358291.jpg?semt=ais_hybrid',
             }));
         } catch (error) {
             throw error;
@@ -39,28 +40,42 @@ export const fetchBooks = createAsyncThunk(
 
 
 export const addBook = createAsyncThunk(
-    'books/addBook', // Fix 2: Changed from '/'
+    'books/addBook',
     async (bookData) => {
-        const response = await axios.post(API_URL, bookData);
-        return response.data;
+        try {
+            const response = await axios.post(API_URL, bookData);
+            return response.data;
+        } catch (error) {
+            throw new Error(error.response?.data?.message || 'Failed to add book');
+        }
     }
 );
 
 export const updateBook = createAsyncThunk(
-    'books/updateBook', // Fix 3: Changed from ''
+    'books/updateBook',
     async (bookData) => {
-        const response = await axios.put(`${API_URL}/${bookData.id}`, bookData);
-        return response.data;
+        try {
+            const response = await axios.put(`${API_URL}/${bookData.id}`, bookData);
+            return response.data;
+        } catch (error) {
+            throw new Error(error.response?.data?.message || 'Failed to update book');
+        }
     }
 );
 
+
 export const deleteBook = createAsyncThunk(
-    'books/deleteBook', // Fix 4: Changed from ''
+    'books/deleteBook',
     async (id) => {
-        await axios.delete(`${API_URL}/${id}`);
-        return id;
+        try {
+            await axios.delete(`${API_URL}/${id}`);
+            return id;
+        } catch (error) {
+            throw new Error(`Failed to delete book: ${error.message}`);
+        }
     }
 );
+
 
 const booksSlice = createSlice({
     name: 'books',

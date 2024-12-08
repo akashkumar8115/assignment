@@ -11,11 +11,11 @@ const api = axios.create({
 });
 
 export const bookService = {
-    getAll: () => api.get('/books'),
-    getById: (id) => api.get(`/books/${id}`),
-    create: (data) => api.post('/books', data),
-    update: (id, data) => api.put(`/books/${id}`, data),
-    delete: (id) => api.delete(`/books/${id}`),
+    getAll: () => api.get('/historyBooks'),
+    getById: (id) => api.get(`/historyBooks/${id}`),
+    create: (data) => api.post('/historyBooks', data),
+    update: (id, data) => api.put(`/historyBooks/${id}`, data),
+    delete: (id) => api.delete(`/historyBooks/${id}`),
 };
 
 export default api;
