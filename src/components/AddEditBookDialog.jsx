@@ -23,7 +23,7 @@ function AddEditBookDialog({ open, handleClose, book, onSubmit }) {
                 bookName: book.bookName || 'name',
                 authorName: book.authorName || 'unknow',
                 price: book.price || '123',
-                imageurl: book.imageUrl||""
+                imageurl: book.imageUrl || ""
                 // imagePreview: book.imageUrl || '',
             });
         } else {
@@ -69,6 +69,10 @@ function AddEditBookDialog({ open, handleClose, book, onSubmit }) {
         if (formData.image) {
             data.append('image', formData.imageurl);
         }
+        // Debug: Check what's being sent
+        // for (let pair of data.entries()) {
+        //     console.log(pair[0] + ': ' + pair[1]);
+        // }
 
         onSubmit(data);
         handleClose();

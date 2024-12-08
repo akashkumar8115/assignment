@@ -29,13 +29,16 @@ function BooksPage() {
 
     const handleCreate = async (formData) => {
         try {
-            await bookService.createBook(formData);
+            const response = await bookService.createBook(formData);
+            console.log('Create response:', response);
             fetchBooks();
             setDialogOpen(false);
         } catch (err) {
-            setError('Failed to add book');
+            console.error('Create error details:', err);
+            setError(`Failed to add book: ${err.message}`);
         }
     };
+
 
     // const handleUpdate = async (id, formData) => {
     //     try {

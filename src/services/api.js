@@ -21,7 +21,7 @@
 // export default api;
 
 
-const API_URL = 'http://localhost:5000/api/historyBooks';
+const API_URL = 'https://assignment-backend-a3m9.onrender.com/api/historyBooks';
 const bookService = {
     // Get all books
     async getAllBooks() {
@@ -30,11 +30,26 @@ const bookService = {
     },
 
     // Create book
+    // async createBook(formData) {
+    //     const response = await fetch(API_URL, {
+    //         method: 'POST',
+    //         body: formData
+    //     });
+    //     return await response.json();
+    // },
     async createBook(formData) {
         const response = await fetch(API_URL, {
             method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                // Remove Content-Type header when sending FormData
+            },
             body: formData
         });
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.message || 'Failed to create book');
+        }
         return await response.json();
     },
 
