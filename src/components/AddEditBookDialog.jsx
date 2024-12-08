@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
 import {
     Dialog,
     DialogTitle,
@@ -8,64 +7,71 @@ import {
     TextField,
     Button,
 } from '@mui/material';
-import { addBook, updateBook,deleteBook,fetchBooks } from '../features/booksSlice';
 
-function AddEditBookDialog({ open, handleClose, book, onSuccess, onError }) {
-    const dispatch = useDispatch();
+function AddEditBookDialog({ open, handleClose, book, onSubmit }) {
     const [formData, setFormData] = useState({
-        name: '',
-        author: '',
+        bookName: '',
+        authorName: '',
         price: '',
-        imageUrl: ''
+        imageurl: "",
+        // imagePreview: '',
     });
-    const [selectedFile, setSelectedFile] = useState(null);
 
     useEffect(() => {
         if (book) {
-            setFormData(book);
+            setFormData({
+                bookName: book.bookName || 'name',
+                authorName: book.authorName || 'unknow',
+                price: book.price || '123',
+                imageurl: book.imageUrl||""
+                // imagePreview: book.imageUrl || '',
+            });
         } else {
             setFormData({
-                name: '',
-                author: '',
+                bookName: '',
+                authorName: '',
                 price: '',
-                imageUrl: ''
+                imageurl: '',
+                // imagePreview: '',
             });
         }
     }, [book]);
 
-    const handleFileChange = (event) => {
-        const file = event.target.files[0];
-        if (file) {
+    const handleChange = (e) => {
+        const { name, value, files } = e.target;
+
+        if (name === 'image' && files.length > 0) {
+            const file = files[0];
             const reader = new FileReader();
-            reader.onloadend = () => {
-                setFormData({ ...formData, imageUrl: reader.result });
+            reader.onload = () => {
+                setFormData((prev) => ({
+                    ...prev,
+                    image: file,
+                    imageurl: reader.result,
+                }));
             };
             reader.readAsDataURL(file);
-            setSelectedFile(file);
+        } else {
+            setFormData((prev) => ({
+                ...prev,
+                [name]: value,
+            }));
         }
     };
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = (e) => {
         e.preventDefault();
-        try {
-            const bookData = {
-                name: formData.name,
-                author: formData.author,
-                price: Number(formData.price),
-                imageUrl: formData.imageUrl
-            };
+        const data = new FormData();
+        data.append('bookName', formData.bookName);
+        data.append('authorName', formData.authorName);
+        data.append('price', formData.price);
 
-            if (book) {
-                await dispatch(updateBook({ ...bookData, id: book.id })).unwrap();
-                onSuccess('Book updated successfully!');
-            } else {
-                await dispatch(addBook(bookData)).unwrap();
-                onSuccess('Book added successfully!');
-            }
-            handleClose();
-        } catch (error) {
-            onError(error.message || 'An error occurred');
+        if (formData.image) {
+            data.append('image', formData.imageurl);
         }
+
+        onSubmit(data);
+        handleClose();
     };
 
     return (
@@ -74,19 +80,20 @@ function AddEditBookDialog({ open, handleClose, book, onSuccess, onError }) {
                 <DialogTitle>{book ? 'Edit Book' : 'Add New Book'}</DialogTitle>
                 <DialogContent>
                     <input
+                        name="image"
                         type="file"
                         accept="image/*"
-                        onChange={handleFileChange}
+                        onChange={handleChange}
                         style={{ margin: '10px 0' }}
                     />
-                    {formData.imageUrl && (
+                    {formData.imageurl && (
                         <img
-                            src={formData.imageUrl}
+                            src={formData.imageurl}
                             alt="Preview"
                             style={{
                                 maxWidth: '100%',
                                 maxHeight: '200px',
-                                marginBottom: '10px'
+                                marginBottom: '10px',
                             }}
                         />
                     )}
@@ -94,27 +101,30 @@ function AddEditBookDialog({ open, handleClose, book, onSuccess, onError }) {
                         autoFocus
                         margin="dense"
                         label="Book Name"
+                        name="bookName"
                         fullWidth
                         required
-                        value={formData.name}
-                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                        value={formData.bookName}
+                        onChange={handleChange}
                     />
                     <TextField
                         margin="dense"
-                        label="Author"
+                        label="Author Name"
+                        name="authorName"
                         fullWidth
                         required
-                        value={formData.author}
-                        onChange={(e) => setFormData({ ...formData, author: e.target.value })}
+                        value={formData.authorName}
+                        onChange={handleChange}
                     />
                     <TextField
                         margin="dense"
                         label="Price"
+                        name="price"
                         type="number"
                         fullWidth
                         required
                         value={formData.price}
-                        onChange={(e) => setFormData({ ...formData, price: Number(e.target.value) })}
+                        onChange={handleChange}
                     />
                 </DialogContent>
                 <DialogActions>

@@ -1,71 +1,34 @@
-import React from 'react';
-import { Card, CardContent, Typography, IconButton, Box, Chip } from '@mui/material';
+import React, { useState } from 'react';
+import { Card, CardContent, Typography, IconButton, Chip, Box } from '@mui/material';
 import { Edit, Delete, ShoppingCart } from '@mui/icons-material';
 import { motion } from 'framer-motion';
-import { useDispatch } from 'react-redux';
-import { deleteBook } from '../features/booksSlice';
 
-function BookCard({ book, onEdit }) {
-    const dispatch = useDispatch();
-    const handleDelete = async () => {
+function BookCard({ book, onEdit, onDelete }) {
+    const handleDelete = () => {
         if (window.confirm('Are you sure you want to delete this book?')) {
-            try {
-                await dispatch(deleteBook(book.id)).unwrap();
-            } catch (error) {
-                console.error('Failed to delete book:', error);
-            }
+            onDelete(book._id);
         }
     };
+
     return (
-        <motion.div
-            whileHover={{ scale: 1.02 }}
-            transition={{ duration: 0.2 }}
-            className="card-hover"
-        >
-            <Card className="h-full flex flex-col">
-                <CardContent className="flex-1">
-                    <Typography variant="h6" className="font-bold text-gray-800 mb-2">
-                        {book.imageUrl ? (
-                            <img
-                                src={book.imageUrl}
-                                alt={book.name}
-                                className="w-full h-48 object-cover mb-4"
-                            />
-                        ) : (
-                            <div className="w-full h-48 bg-gray-300 mb-4"></div>
-                        )}
-                    </Typography>
-                    <Typography variant="h5" className="font-bold text-gray-800 mb-2">
-                        {book.name}
-                    </Typography>
-                    <Typography className="text-gray-600 mb-2">
-                        Author: {book.author}
-                    </Typography>
-                    <Chip
-                        label={`$${book.price}`}
-                        color="primary"
-                        className="mb-4"
-                    />
-                    <Box className="flex justify-between items-center mt-4">
-                        <IconButton
-                            onClick={() => onEdit(book)}
-                            className="hover:text-blue-600"
-                        >
-                            <Edit />
+        <motion.div whileHover={{ scale: 1.02 }} transition={{ duration: 0.2 }}>
+            <Card>
+                <CardContent>
+                    {book.imageUrl ? (
+                        <img src={book.imageUrl} alt={book.name} style={{ width: '100%', height: '200px', objectFit: 'cover' }} />
+                    ) : (
+                        <div style={{ width: '100%', height: '200px', backgroundColor: '#ccc' }}></div>
+                    )}
+                    <Typography variant="h5">{book.bookName}</Typography>
+                    <Typography>Author: {book.authorName}</Typography>
+                    <Chip label={`$${book.price}`} color="primary" />
+                    <Box mt={2}>
+                        <IconButton onClick={() => onEdit(book)}><Edit />
+
                         </IconButton>
-                        <IconButton
-                            onClick={handleDelete}
-                            aria-label="delete"
-                            aria-haspopup="true"
-                            className="hover:text-red-600"
-                        >
-                            <Delete />
-                        </IconButton>
-                        <IconButton
-                            className="hover:text-green-600"
-                        >
-                            <ShoppingCart />
-                        </IconButton>
+
+                        <IconButton onClick={handleDelete}><Delete /></IconButton>
+                        <IconButton><ShoppingCart /></IconButton>
                     </Box>
                 </CardContent>
             </Card>

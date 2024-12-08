@@ -1,142 +1,100 @@
-import React, { useEffect, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import {
-    Container,
-    Grid,
-    Typography,
-    Fab,
-    Snackbar,
-    Alert
-} from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { Container, Grid, Typography, Fab } from '@mui/material';
 import { Add as AddIcon } from '@mui/icons-material';
-import SearchBar from '../components/SearchBar';
-import SortOptions from '../components/SortOptions';
-import BookList from '../components/BookList';
 import BookCard from '../components/BookCard';
 import AddEditBookDialog from '../components/AddEditBookDialog';
-import LoadingSpinner from '../components/LoadingSpinner';
-import { fetchBooks } from '../features/booksSlice';
+import bookService from '../services/api';
 
 function BooksPage() {
-    const dispatch = useDispatch();
-    const { books = [], searchQuery = '', sortOption = '', status } = useSelector((state) => state.books);
+    const [books, setBooks] = useState([]);
     const [dialogOpen, setDialogOpen] = useState(false);
     const [selectedBook, setSelectedBook] = useState(null);
-    const [snackbar, setSnackbar] = useState({
-        open: false,
-        message: '',
-        severity: 'success'
-    });
+    const [error, setError] = useState(null);
+    const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        if (status === 'idle') {
-            dispatch(fetchBooks());
+    const fetchBooks = async () => {
+        try {
+            const data = await bookService.getAllBooks();
+            setBooks(data);
+        } catch (err) {
+            setError('Failed to fetch books');
+        } finally {
+            setLoading(false);
         }
-    }, [status, dispatch]);
-
-    const handleAddBook = () => {
-        setSelectedBook(null);
-        setDialogOpen(true);
     };
 
-    const handleEditBook = (book) => {
+    useEffect(() => {
+        fetchBooks();
+    }, []);
+
+    const handleCreate = async (formData) => {
+        try {
+            await bookService.createBook(formData);
+            fetchBooks();
+            setDialogOpen(false);
+        } catch (err) {
+            setError('Failed to add book');
+        }
+    };
+
+    // const handleUpdate = async (id, formData) => {
+    //     try {
+    //         await bookService.updateBook(id, formData);
+    //         fetchBooks();
+    //         setDialogOpen(false);
+    //     } catch (err) {
+    //         setError('Failed to update book');
+    //     }
+    // };
+
+    const handleUpdate = async (formData) => {
+        try {
+            if (!selectedBook?._id) return;
+            await bookService.updateBook(selectedBook._id, formData);
+            fetchBooks();
+            setDialogOpen(false);
+            setSelectedBook(null); // Reset selected book after update
+        } catch (err) {
+            setError('Failed to update book');
+        }
+    };
+    // Update the edit handler
+    const handleEdit = (book) => {
         setSelectedBook(book);
         setDialogOpen(true);
     };
-
-    const handleDialogClose = () => {
-        setDialogOpen(false);
-        setSelectedBook(null);
+    const handleDelete = async (id) => {
+        try {
+            await bookService.deleteBook(id);
+            fetchBooks();
+        } catch (err) {
+            setError('Failed to delete book');
+        }
     };
 
-    const handleSuccess = (message) => {
-        setSnackbar({
-            open: true,
-            message,
-            severity: 'success'
-        });
-        handleDialogClose();
-    };
-
-    const handleError = (message) => {
-        setSnackbar({
-            open: true,
-            message,
-            severity: 'error'
-        });
-    };
-
-    // Move filtered books logic here
-    const filteredBooks = Array.isArray(books)
-        ? books.filter((book) =>
-            book?.name?.toLowerCase().includes((searchQuery || '').toLowerCase()) ||
-            book?.author?.toLowerCase().includes((searchQuery || '').toLowerCase())
-        ).sort((a, b) => {
-            if (sortOption === 'lowToHigh') return a.price - b.price;
-            if (sortOption === 'highToLow') return b.price - a.price;
-            return 0;
-        })
-        : [];
-
-    // Render loading state
-    if (status === 'loading') {
-        return (
-            <Container maxWidth="lg" className="py-8 pt-16">
-                <LoadingSpinner />
-            </Container>
-        );
-    }
+    if (loading) return <Typography>Loading...</Typography>;
+    if (error) return <Typography color="error">{error}</Typography>;
 
     return (
-        <Container maxWidth="lg" className="py-8 pt-16">
-            <div className="flex justify-between items-center mb-6">
-                <Typography variant="h4" component="h1">
-                    Book Collection
-                </Typography>
-                <Fab
-                    color="primary"
-                    aria-label="add"
-                    onClick={handleAddBook}
-                    className="hover:bg-blue-600"
-                >
-                    <AddIcon />
-                </Fab>
-            </div>
-
-            <SearchBar />
-            <SortOptions />
-            <BookList onEditBook={handleEditBook} />
-            {/* <Grid container spacing={3} className="mt-6">
-                {filteredBooks.map((book) => (
-                    <Grid item xs={12} sm={6} md={4} key={book.id}>
-                        <BookCard
-                            book={book}
-                            onEdit={() => handleEditBook(book)}
-                        />
+        <Container className='books-page pt-6'>
+            <Typography variant="h4">Books Collection</Typography>
+            <Fab onClick={() => setDialogOpen(true)}>
+                <AddIcon />
+            </Fab>
+            <Grid container spacing={2} className='mt-4 mb-4'>
+                {books.map((book) => (
+                    <Grid item xs={12} sm={6} md={4} key={book._id}>
+                        {/* <BookCard book={book} onEdit={setSelectedBook} onDelete={handleDelete}/> */}
+                        <BookCard book={book} onEdit={handleEdit} onDelete={handleDelete} />
                     </Grid>
                 ))}
-            </Grid> */}
-
+            </Grid>
             <AddEditBookDialog
                 open={dialogOpen}
-                handleClose={handleDialogClose}
+                handleClose={() => setDialogOpen(false)}
                 book={selectedBook}
-                onSuccess={handleSuccess}
-                onError={handleError}
+                onSubmit={selectedBook ? handleUpdate : handleCreate}
             />
-
-            <Snackbar
-                open={snackbar.open}
-                autoHideDuration={6000}
-                onClose={() => setSnackbar({ ...snackbar, open: false })}
-            >
-                <Alert
-                    onClose={() => setSnackbar({ ...snackbar, open: false })}
-                    severity={snackbar.severity}
-                >
-                    {snackbar.message}
-                </Alert>
-            </Snackbar>
         </Container>
     );
 }
