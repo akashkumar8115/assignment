@@ -69,10 +69,8 @@ function AddEditBookDialog({ open, handleClose, book, onSubmit }) {
         if (formData.image) {
             data.append('image', formData.imageurl);
         }
-        // Debug: Check what's being sent
-        // for (let pair of data.entries()) {
-        //     console.log(pair[0] + ': ' + pair[1]);
-        // }
+        console.log(data);
+
 
         onSubmit(data);
         handleClose();
@@ -90,6 +88,15 @@ function AddEditBookDialog({ open, handleClose, book, onSubmit }) {
                         onChange={handleChange}
                         style={{ margin: '10px 0' }}
                     />
+                    {/* <TextField
+                        autoFocus
+                        margin="dense"
+                        label="Book Url"
+                        name="image"
+                        fullWidth
+                        value={formData.imageurl}
+                        onChange={handleChange}
+                    /> */}
                     {formData.imageurl && (
                         <img
                             src={formData.imageurl}

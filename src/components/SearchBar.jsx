@@ -1,11 +1,16 @@
 import React from 'react';
 import { TextField, InputAdornment } from '@mui/material';
 import { Search } from '@mui/icons-material';
-import { useDispatch } from 'react-redux';
-import { setSearchQuery } from '../features/booksSlice';
 
-function SearchBar() {
-    const dispatch = useDispatch();
+function SearchBar({ onSearch }) {
+    if (typeof onSearch !== 'function') {
+        console.warn('onSearch prop must be a function');
+        onSearch = () => {}; // Fallback empty function
+    }
+
+    const handleChange = (e) => {
+        onSearch(e.target.value);
+    };
 
     return (
         <TextField
@@ -19,7 +24,8 @@ function SearchBar() {
                     </InputAdornment>
                 ),
             }}
-            onChange={(e) => dispatch(setSearchQuery(e.target.value))}
+            onChange={handleChange}
+            sx={{ maxWidth: '400px' }}
         />
     );
 }

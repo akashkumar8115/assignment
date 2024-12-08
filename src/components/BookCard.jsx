@@ -17,7 +17,10 @@ function BookCard({ book, onEdit, onDelete }) {
                     {book.imageUrl ? (
                         <img src={book.imageUrl} alt={book.name} style={{ width: '100%', height: '200px', objectFit: 'cover' }} />
                     ) : (
-                        <div style={{ width: '100%', height: '200px', backgroundColor: '#ccc' }}></div>
+                        <div style={{ width: '100%', height: '200px', backgroundColor: '#ccc' }}>
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTO32Qj8RbsafOtD33hk6C_EPb07MZ4oQPIWFmPMqRIvx1h_wKrkOZgpe5dm2uzQpd5Udw&usqp=CAU" alt="Book" style={{ width: '100%', height: '200px', objectFit: 'cover' }} />
+
+                        </div>
                     )}
                     <Typography variant="h5">{book.bookName}</Typography>
                     <Typography>Author: {book.authorName}</Typography>
