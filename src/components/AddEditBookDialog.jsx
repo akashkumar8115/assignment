@@ -9,10 +9,12 @@ import {
     Button,
 } from '@mui/material';
 import { addBook, updateBook } from '../features/booksSlice';
+import { image } from 'framer-motion/client';
 
 function AddEditBookDialog({ open, handleClose, book, onSuccess, onError }) {
     const dispatch = useDispatch();
     const [formData, setFormData] = useState({
+        imageUrl: '',
         name: '',
         author: '',
         price: '',
@@ -23,6 +25,7 @@ function AddEditBookDialog({ open, handleClose, book, onSuccess, onError }) {
             setFormData(book);
         } else {
             setFormData({
+                imageUrl: '',
                 name: '',
                 author: '',
                 price: '',
@@ -33,13 +36,24 @@ function AddEditBookDialog({ open, handleClose, book, onSuccess, onError }) {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
+            const bookData = {
+                imageUrl: formData.imageUrl,
+                name: formData.name,
+                author: formData.author,
+                price: Number(formData.price)
+            };
+
             if (book) {
-                await dispatch(updateBook({ ...formData, id: book.id })).unwrap();
+                await dispatch(updateBook({ ...bookData, id: book.id })).unwrap();
                 onSuccess('Book updated successfully!');
+                console.log('Book updated successfully!', bookData);
+
             } else {
-                await dispatch(addBook({ ...formData, id: Date.now() })).unwrap();
+                await dispatch(addBook(bookData)).unwrap();
                 onSuccess('Book added successfully!');
+                console.log('Book added Unsuccessfully!', bookData);
             }
+            handleClose();
         } catch (error) {
             onError(error.message || 'An error occurred');
         }
@@ -49,6 +63,18 @@ function AddEditBookDialog({ open, handleClose, book, onSuccess, onError }) {
         <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
             <form onSubmit={handleSubmit}>
                 <DialogTitle>{book ? 'Edit Book' : 'Add New Book'}</DialogTitle>
+                <DialogActions>
+                    <input type="file" accept="image/*"
+                        onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
+                        autoFocus
+                        margin="dense"
+                        label="Book imagee"
+                        fullWidth
+                        required
+                        value={formData.imageUrl}
+                    />
+                </DialogActions>
+
                 <DialogContent>
                     <TextField
                         autoFocus
@@ -83,6 +109,8 @@ function AddEditBookDialog({ open, handleClose, book, onSuccess, onError }) {
                         {book ? 'Update' : 'Add'}
                     </Button>
                 </DialogActions>
+
+
             </form>
         </Dialog>
     );

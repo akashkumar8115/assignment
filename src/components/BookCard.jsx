@@ -24,6 +24,17 @@ function BookCard({ book, onEdit }) {
         >
             <Card className="h-full flex flex-col">
                 <CardContent className="flex-1">
+                    <Typography variant="h6" className="font-bold text-gray-800 mb-2">
+                        {book.imageUrl ? (
+                            <img
+                                src={book.imageUrl}
+                                alt={book.name}
+                                className="w-full h-48 object-cover mb-4"
+                            />
+                        ) : (
+                            <div className="w-full h-48 bg-gray-300 mb-4"></div>
+                        )}
+                    </Typography>
                     <Typography variant="h5" className="font-bold text-gray-800 mb-2">
                         {book.name}
                     </Typography>

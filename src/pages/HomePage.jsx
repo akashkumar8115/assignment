@@ -2,12 +2,24 @@ import React from 'react';
 import { Container, Typography, Button, Grid, Paper } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-
+import HeroBanner from '../components/home/HeroBanner';
+import BookGrid from '../components/home/BookGrid';
+import AboutSection from '../components/home/AboutSection';
 function HomePage() {
     const navigate = useNavigate();
 
     return (
         <div className="min-h-screen">
+            <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.5 }}
+                className="min-h-screen"
+            >
+                <HeroBanner />
+                <BookGrid />
+                <AboutSection />
+            </motion.div>
             <Container maxWidth="lg" className="py-12">
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
@@ -43,6 +55,7 @@ function HomePage() {
                     </Grid>
                 </motion.div>
             </Container>
+
         </div>
     );
 }
