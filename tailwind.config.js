@@ -1,16 +1,25 @@
 /** @type {import('tailwindcss').Config} */
-export default {
-  content: [
-    "./index.html",
-    "./src/components/**/*.{js,ts,jsx,tsx}",
-    "./src/pages/**/*.{js,ts,jsx,tsx}",
-    "./src/app/**/*.{js,ts,jsx,tsx}",
-    "./src/index.css",
-    "./src/**/*.{js,ts,jsx,tsx}",
-  ],
+module.exports = {
+  content: ['./src/**/*.{js,jsx,ts,tsx}'],
+  important: '#root',
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        primary: {
+          light: '#60A5FA',
+          main: '#3B82F6',
+          dark: '#2563EB',
+        },
+        secondary: {
+          light: '#34D399',
+          main: '#10B981',
+          dark: '#059669',
+        },
+      },
+      spacing: {
+        '128': '32rem',
+      },
+    },
   },
   plugins: [],
-}
-
+};

@@ -1,78 +1,49 @@
-import React, { useEffect, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { Container, Grid, Typography, Fab, CircularProgress } from '@mui/material';
-import { Add } from '@mui/icons-material';
-import SearchBar from '../components/SearchBar';
-import SortOptions from '../components/SortOptions';
-import BookCard from '../components/BookCard';
-import AddEditBookDialog from '../components/AddEditBookDialog';
-import { fetchBooks } from '../features/booksSlice';
+import React from 'react';
+import { Container, Typography, Button, Grid, Paper } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
 
 function HomePage() {
-    const dispatch = useDispatch();
-    const { books, searchQuery, sortOption, status } = useSelector((state) => state.books);
-    const [dialogOpen, setDialogOpen] = useState(false);
-    const [selectedBook, setSelectedBook] = useState(null);
-
-    useEffect(() => {
-        if (status === 'idle') {
-            dispatch(fetchBooks());
-        }
-    }, [status, dispatch]);
-
-    const filteredBooks = books
-        .filter((book) =>
-            book.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            book.author.toLowerCase().includes(searchQuery.toLowerCase())
-        )
-        .sort((a, b) => {
-            if (sortOption === 'lowToHigh') return a.price - b.price;
-            if (sortOption === 'highToLow') return b.price - a.price;
-            return 0;
-        });
-
-    const handleEdit = (book) => {
-        setSelectedBook(book);
-        setDialogOpen(true);
-    };
-
-    if (status === 'loading') {
-        return <CircularProgress />;
-    }
+    const navigate = useNavigate();
 
     return (
-        <Container maxWidth="lg" sx={{ py: 4 }}>
-            <Typography variant="h3" component="h1" gutterBottom>
-                Book Store
-            </Typography>
-            <SearchBar />
-            <SortOptions />
-            <Grid container spacing={3} sx={{ mt: 3 }}>
-                {filteredBooks.map((book) => (
-                    <Grid item xs={12} sm={6} md={4} key={book.id}>
-                        <BookCard book={book} onEdit={handleEdit} />
+        <div className="min-h-screen">
+            <Container maxWidth="lg" className="py-12">
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5 }}
+                >
+                    <Grid container spacing={6} alignItems="center">
+                        <Grid item xs={12} md={6}>
+                            <Typography variant="h2" className="font-bold mb-4">
+                                Welcome to BookStore
+                            </Typography>
+                            <Typography variant="h5" className="text-gray-600 mb-6">
+                                Discover your next favorite book
+                            </Typography>
+                            <Button
+                                variant="contained"
+                                size="large"
+                                onClick={() => navigate('/books')}
+                                className="text-lg"
+                            >
+                                Browse Books
+                            </Button>
+                        </Grid>
+                        <Grid item xs={12} md={6}>
+                            <Paper elevation={3} className="p-6">
+                                <img
+                                    src="/books-illustration.svg"
+                                    alt="Books"
+                                    className="w-full"
+                                />
+                            </Paper>
+                        </Grid>
                     </Grid>
-                ))}
-            </Grid>
-            <Fab
-                color="primary"
-                sx={{ position: 'fixed', bottom: 16, right: 16 }}
-                onClick={() => {
-                    setSelectedBook(null);
-                    setDialogOpen(true);
-                }}
-            >
-                <Add />
-            </Fab>
-            <AddEditBookDialog
-                open={dialogOpen}
-                handleClose={() => {
-                    setDialogOpen(false);
-                    setSelectedBook(null);
-                }}
-                book={selectedBook}
-            />
-        </Container>
+                </motion.div>
+            </Container>
+        </div>
     );
 }
 
