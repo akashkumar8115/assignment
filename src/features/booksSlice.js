@@ -1,13 +1,13 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
-const API_URL ="https://assignment-backend-a3m9.onrender.com/api/historyBooks" || "http://localhost:5000/api/historyBooks";
+const API_URL ="https://assignment-backend-a3m9.onrender.com/api/historyBooks";
 
 const initialState = {
     books: [
-        { id: 1, name: 'Book One', author: 'Author A', imageUrl: "https://img.freepik.com/free-vector/red-book-white-background_1308-26708.jpg?ga=GA1.1.168732325.1722966352&semt=ais_hybrid", price: 200 },
-        { id: 2, name: 'Book Two', author: 'Author B', imageUrl: "https://img.freepik.com/premium-vector/school-books-illustration_977344-1313.jpg?ga=GA1.1.168732325.1722966352&semt=ais_hybrid", price: 150 },
-        { id: 3, name: 'Book Three', author: 'Author C', imageUrl: "https://img.freepik.com/free-vector/open-blue-book-white_1308-69339.jpg?ga=GA1.1.168732325.1722966352&semt=ais_hybrid", price: 300 },
+        { id: 1, name: 'History', author: 'Rohit', imageUrl: "https://img.freepik.com/free-vector/red-book-white-background_1308-26708.jpg?ga=GA1.1.168732325.1722966352&semt=ais_hybrid", price: 200 },
+        { id: 2, name: 'Maths', author: 'Aman B', imageUrl: "https://img.freepik.com/premium-vector/school-books-illustration_977344-1313.jpg?ga=GA1.1.168732325.1722966352&semt=ais_hybrid", price: 150 },
+        { id: 3, name: 'English', author: 'karan C', imageUrl: "https://img.freepik.com/free-vector/open-blue-book-white_1308-69339.jpg?ga=GA1.1.168732325.1722966352&semt=ais_hybrid", price: 300 },
     ],
     status: 'idle',
     error: null,
